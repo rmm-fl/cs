@@ -1,0 +1,19 @@
+{
+    "image": "debian:11",
+    "privileged": true,
+    "remoteUser": "vscode",
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "installZsh": false,
+            "installOhMyZsh": false,
+            "configureZshAsDefaultShell": false,
+            "upgradePackages": true,
+            "nonFreePackages": true
+        },
+        "ghcr.io/devcontainers/features/sshd:1": {},
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    }
+    // "build": {
+    //     "dockerfile": "Dockerfile"
+    // }
+}

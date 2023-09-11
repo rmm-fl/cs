@@ -12,9 +12,9 @@ jobs:
           repository: 'rmm-fl/App'
           ref: 'i-26607'
 
-      - name: Setup Node.js
-        shell: bash
-        run: nvm install && nvm use
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
 
       - name: Install npm dependencies
         shell: bash

@@ -3,6 +3,9 @@ name: CI
 on:
   workflow_dispatch:
 
+env:
+  DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
+
 jobs:
   build:
     runs-on: macos-latest
@@ -20,9 +23,44 @@ jobs:
         shell: bash
         run: npm ci
 
-      - name: Build ios
+      - name: Setup Xcode
         shell: bash
-        run: npm run ios-build
+        run: sudo xcode-select -switch /Applications/Xcode_14.2.app
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+          bundler-cache: true
+
+      - name: Cache Pod dependencies
+        uses: actions/cache@v3
+        id: pods-cache
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-pods-cache-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: ${{ runner.os }}-pods-cache-
+
+      - name: Compare Podfile.lock and Manifest.lock
+        id: compare-podfile-and-manifest
+        shell: bash
+        run: echo "IS_PODFILE_SAME_AS_MANIFEST=${{ hashFiles('ios/Podfile.lock') == hashFiles('ios/Pods/Manifest.lock') }}" >> "$GITHUB_OUTPUT"
+
+      - name: Install cocoapods
+        uses: nick-invision/retry@v2
+        if: steps.pods-cache.outputs.cache-hit != 'true' || steps.compare-podfile-and-manifest.outputs.IS_PODFILE_SAME_AS_MANIFEST != 'true'
+        with:
+          timeout_minutes: 10
+          max_attempts: 5
+          command: cd ios && bundle exec pod install
+
+      - name: Remove .env.production from Fastfile
+        shell: bash
+        run: sed "s/ENV\[\"ENVFILE\"]=\"\.env\.production\"/ENV\[\"ENVFILE\"]=\"\.env\.staging\"/g" -i fastlane/Fastfile
+
+      - name: Run Fastlane
+        run: bundle exec fastlane ios build
+        env:
+          ENVFILE: '.env.staging'
 
       - name: List file tree
         shell: bash

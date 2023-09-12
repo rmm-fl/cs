@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: 'rmm-fl/App'
+          ref: 'i-26607'
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Install npm dependencies
+        shell: bash
+        run: npm ci
+
+      - name: Remove .env.production from Fastfile
+        shell: bash
+        run: sed -i'' -e "s/ENV\[\"ENVFILE\"]=\"\.env\.production\"/ENV\[\"ENVFILE\"]=\"\.env\.staging\"/g" fastlane/Fastfile
+
+      - name: Run desktop build staging
+        run: npm run desktop-build-staging
+        env:
+          ENVFILE: '.env.staging'
+
+      - name: List file tree
+        shell: bash
+        run: tree -fi

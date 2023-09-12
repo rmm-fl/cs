@@ -32,5 +32,5 @@ jobs:
       - name: List file tree
         shell: bash
         run: |
-            brew install tree
-            tree -fi
+            ls -alh ./desktop-build/
+            ls -alh ./desktop-build/mac/

@@ -1,4 +1,4 @@
-name: CI
+name: Build desktop
 
 on:
   workflow_dispatch:
@@ -31,4 +31,6 @@ jobs:
 
       - name: List file tree
         shell: bash
-        run: tree -fi
+        run: |
+            brew install tree
+            tree -fi

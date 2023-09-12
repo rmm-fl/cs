@@ -58,7 +58,7 @@ jobs:
 
       - name: Remove .env.production from Fastfile
         shell: bash
-        run: sed -i "s/ENV\[\"ENVFILE\"]=\"\.env\.production\"/ENV\[\"ENVFILE\"]=\"\.env\.staging\"/g" fastlane/Fastfile
+        run: sed -i'' "s/ENV\[\"ENVFILE\"]=\"\.env\.production\"/ENV\[\"ENVFILE\"]=\"\.env\.staging\"/g" fastlane/Fastfile
 
       - name: Run Fastlane
         run: bundle exec fastlane ios build

@@ -34,3 +34,8 @@ jobs:
         run: |
             ls -alh ./desktop-build/
             ls -alh ./desktop-build/mac/
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: desktop-build
+          path: ./desktop-build/

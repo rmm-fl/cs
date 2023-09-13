@@ -96,4 +96,5 @@ jobs:
 
       - name: List file tree
         shell: bash
-        run: tree -fi
+        run: |
+            ls -alh
